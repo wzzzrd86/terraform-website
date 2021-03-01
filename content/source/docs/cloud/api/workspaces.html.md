@@ -18,7 +18,7 @@ page_title: "Workspaces - API Docs - Terraform Cloud and Terraform Enterprise"
 [500]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
 [504]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504
 [JSON API document]: /docs/cloud/api/index.html#json-api-documents
-[JSON API error object]: http://jsonapi.org/format/#error-objects
+[JSON API error object]: https://jsonapi.org/format/#error-objects
 
 [speculative plans]: ../run/index.html#speculative-plans
 
@@ -52,12 +52,12 @@ Key path                                      | Type    | Default   | Descriptio
 ----------------------------------------------|---------|-----------|------------
 `data.type`                                   | string  |           | Must be `"workspaces"`.
 `data.attributes.name`                        | string  |           | The name of the workspace, which can only include letters, numbers, `-`, and `_`. This will be used as an identifier and must be unique in the organization.
-`data.attributes.agent-pool-id`               | string  | (nothing) | Required when `execution-mode` is set to `agent`. The ID of the agent pool belonging to the workspace's organization. This value must not be specified if `execution-mode` is set to `remote` or `local` or if `operations` is set to `true`. 
+`data.attributes.agent-pool-id`               | string  | (nothing) | Required when `execution-mode` is set to `agent`. The ID of the agent pool belonging to the workspace's organization. This value must not be specified if `execution-mode` is set to `remote` or `local` or if `operations` is set to `true`.
 `data.attributes.allow-destroy-plan`          | boolean | `true`    | Whether destroy plans can be queued on the workspace.
 `data.attributes.auto-apply`                  | boolean | `false`   | Whether to automatically apply changes when a Terraform plan is successful, [with some exceptions](../workspaces/settings.html#auto-apply-and-manual-apply).
 `data.attributes.description`                 | string  | (nothing) | A description for the workspace.
-`data.attributes.execution-mode`              | string  | `remote`  | Which [execution mode](/docs/cloud/workspaces/settings.html#execution-mode) to use. Valid values are `remote`, `local`, and `agent`. When set to `local`, the workspace will be used for state storage only. This value must not be specified if `operations` is specified. 
-`data.attributes.operations`                  | boolean | `true`    | **DEPRECATED** Use `execution-mode` instead. Whether to use remote execution mode. When set to `false`, the workspace will be used for state storage only. This value must not be specified if `execution-mode` is specified. 
+`data.attributes.execution-mode`              | string  | `remote`  | Which [execution mode](/docs/cloud/workspaces/settings.html#execution-mode) to use. Valid values are `remote`, `local`, and `agent`. When set to `local`, the workspace will be used for state storage only. This value must not be specified if `operations` is specified.
+`data.attributes.operations`                  | boolean | `true`    | **DEPRECATED** Use `execution-mode` instead. Whether to use remote execution mode. When set to `false`, the workspace will be used for state storage only. This value must not be specified if `execution-mode` is specified.
 `data.attributes.file-triggers-enabled`       | boolean | `true`    | Whether to filter runs based on the changed files in a VCS push. If enabled, the `working-directory` and `trigger-prefixes` describe a set of paths which must contain changes for a VCS push to trigger a run. If disabled, any push will trigger a run.
 `data.attributes.source-name` **(beta)**      | string  | (nothing) | A friendly name for the application or client creating this workspace. If set, this will be displayed on the workspace as "Created via `<SOURCE NAME>`".
 `data.attributes.source-url` **(beta)**       | string  | (nothing) | A URL for the application or client creating this workspace. This can be the URL of a related resource in another app, or a link to documentation or other info about the client.
@@ -317,10 +317,10 @@ Key path                                      | Type           | Default        
 `data.type`                                   | string         |                  | Must be `"workspaces"`.
 `data.attributes.name`                        | string         | (previous value) | A new name for the workspace, which can only include letters, numbers, `-`, and `_`. This will be used as an identifier and must be unique in the organization. **Warning:** Changing a workspace's name changes its URL in the API and UI.
 `data.attributes.description`                 | string         | (previous value) | A description for the workspace.
-`data.attributes.agent-pool-id`               | string         | (previous value) | Required when `execution-mode` is set to `agent`. The ID of the agent pool belonging to the workspace's organization. This value must not be specified if `execution-mode` is set to `remote` or `local` or if `operations` is set to `true`. 
+`data.attributes.agent-pool-id`               | string         | (previous value) | Required when `execution-mode` is set to `agent`. The ID of the agent pool belonging to the workspace's organization. This value must not be specified if `execution-mode` is set to `remote` or `local` or if `operations` is set to `true`.
 `data.attributes.auto-apply`                  | boolean        | (previous value) | Whether to automatically apply changes when a Terraform plan is successful, [with some exceptions](../workspaces/settings.html#auto-apply-and-manual-apply).
 `data.attributes.allow-destroy-plan`          | boolean        | (previous value) | Whether destroy plans can be queued on the workspace.
-`data.attributes.execution-mode`              | string         | (previous value) | Which [execution mode](/docs/cloud/workspaces/settings.html#execution-mode) to use. Valid values are `remote`, `local`, and `agent`. When set to `local`, the workspace will be used for state storage only. This value must not be specified if `operations` is specified. 
+`data.attributes.execution-mode`              | string         | (previous value) | Which [execution mode](/docs/cloud/workspaces/settings.html#execution-mode) to use. Valid values are `remote`, `local`, and `agent`. When set to `local`, the workspace will be used for state storage only. This value must not be specified if `operations` is specified.
 `data.attributes.operations`                  | boolean        | (previous value) | **DEPRECATED** Use `execution-mode` instead. Whether to use remote execution mode. When set to `false`, the workspace will be used for state storage only. This value must not be specified if `execution-mode` is specified.
 `data.attributes.file-triggers-enabled`       | boolean        | (previous value) | Whether to filter runs based on the changed files in a VCS push. If enabled, the `working-directory` and `trigger-prefixes` describe a set of paths which must contain changes for a VCS push to trigger a run. If disabled, any push will trigger a run.
 `data.attributes.queue-all-runs`              | boolean        | (previous value) | Whether runs should be queued immediately after workspace creation. When set to false, runs triggered by a VCS change will not be queued until at least one run is manually queued.
@@ -1100,6 +1100,8 @@ $ curl \
 The GET endpoints above can optionally return related resources, if requested with [the `include` query parameter](./index.html#inclusion-of-related-resources). The following resource types are available:
 
 * `organization` - The full organization record.
+* `current_configuration_version` - The last configuration this workspace received, excluding plan-only configurations. If you start a run without providing a different configuration, it will use this one.
+* `current_configuration_version.ingress_attributes` - The commit information for the current configuration version.
 * `current_run` - Additional information about the current run.
 * `current_run.plan` - The plan used in the current run.
 * `current_run.configuration_version` - The configuration used in the current run.
